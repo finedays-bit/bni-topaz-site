@@ -7,3 +7,6 @@ out/
 *.log
 .DS_Store
 Thumbs.db
+
+# 멤버 명함(개인 연락처 포함) - 공개 저장소에 올리지 않음
+public/cards/
