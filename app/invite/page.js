@@ -1,14 +1,26 @@
-import { invite, members, formatKoreanDate } from "@/lib/data";
-import InviterField from "./InviterField";
+import { formatKoreanDate } from "@/lib/data";
+import { getMembers, getSettings } from "@/lib/store";
+import VisitForm from "./VisitForm";
+import ShareButtons from "./ShareButtons";
+import { meetingDate, upcomingDates } from "@/lib/invite";
 
-export const metadata = {
-  title: "초대장 · BNI 토파즈 챕터",
-  description: `${formatKoreanDate(invite.date)} ${invite.time} · BNI 토파즈 비즈니스 조찬모임에 초대합니다`,
-};
+export const revalidate = 60;
 
-export default function InvitePage() {
+export async function generateMetadata() {
+  const { invite } = await getSettings();
+  const description = `${formatKoreanDate(meetingDate(invite))} ${invite.time} · BNI 토파즈 비즈니스 조찬모임에 초대합니다`;
+  return {
+    title: "초대장 · BNI 토파즈 챕터",
+    description,
+    openGraph: { title: "BNI 토파즈 챕터 초대장", description, images: ["/brand/topaz-main.png"] },
+  };
+}
+
+export default async function InvitePage() {
+  const [{ invite }, members] = await Promise.all([getSettings(), getMembers()]);
+  const when = `${formatKoreanDate(meetingDate(invite))} ${invite.time}`;
   const rows = [
-    ["일 시", `${formatKoreanDate(invite.date)} ${invite.time}`],
+    ["일 시", when],
     ["장 소", invite.venue],
     ["드레스코드", invite.dressCode],
     ["준 비 물", invite.bring],
@@ -41,28 +53,16 @@ export default function InvitePage() {
         <p className="inv-foot">TOGETHER WE GROW</p>
       </article>
 
-      <div className="share">
-        <span className="btn btn-line">초대장 이미지 저장 (3단계)</span>
-        <span className="btn btn-line">카카오톡 공유 (3단계)</span>
-      </div>
+      <ShareButtons text={`${when} BNI 토파즈 챕터 비즈니스 조찬모임에 초대합니다.`} />
 
       <section className="apply" id="apply">
         <p className="eyebrow">Visitor</p>
         <h2>참관 신청</h2>
-        <p className="muted">신청해 주시면 초대한 멤버가 연락드립니다.</p>
-        <form>
-          <label>이름 *<input name="name" required /></label>
-          <label>휴대폰 번호 *<input name="phone" type="tel" inputMode="numeric" required /></label>
-          <label>회사명<input name="company" /></label>
-          <label>사업 분야<input name="field" /></label>
-          <InviterField members={members.map(({ name, company }) => ({ name, company }))} />
-          <label className="agree">
-            <input type="checkbox" required />
-            <span>참석 확인과 모임 안내를 위해 이름·연락처를 수집하는 데 동의합니다. (필수)</span>
-          </label>
-          <button type="button" className="btn btn-main" disabled>신청서 제출</button>
-          <p className="draft-note">화면 초안입니다 — 제출 기능은 2단계에서 연결됩니다.</p>
-        </form>
+        <p className="muted">한 번의 참관으로 BNI 비즈니스 네트워킹을 직접 경험해 보세요. 신청해 주시면 운영진이 확인 후 연락드립니다.</p>
+        <VisitForm
+          members={members.map(({ name, company }) => ({ name, company }))}
+          dates={upcomingDates(invite).map((d) => ({ value: d, label: `${formatKoreanDate(d)} ${invite.time}` }))}
+        />
       </section>
     </main>
   );

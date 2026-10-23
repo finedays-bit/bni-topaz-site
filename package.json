@@ -1,6 +1,9 @@
 {
   "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
     "next": "^15.5.28",
+    "nodemailer": "^7.0.13",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
@@ -11,7 +14,8 @@
     "build": "next build",
     "start": "next start",
     "cards": "node scripts/sync-cards.mjs",
-    "faces": "python scripts/make-faces.py"
+    "faces": "python scripts/make-faces.py",
+    "seed": "node scripts/make-seed.mjs"
   },
   "type": "module"
 }

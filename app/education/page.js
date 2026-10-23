@@ -1,12 +1,12 @@
-import { education } from "@/lib/data";
 import { fetchCsv } from "@/lib/sheets";
+import { getSettings } from "@/lib/store";
 import Icon from "../Icon";
 
 export const metadata = { title: "교육 정보 · BNI 토파즈 챕터" };
-export const revalidate = 600;
+export const revalidate = 60;
 
 // 점수 기준: 관리자가 구글 시트를 연결하면 그 표(첫 줄=제목), 아니면 기본 표
-async function scoreRows() {
+async function scoreRows(education) {
   if (!education.scoreSheetCsv) return education.scoreTable;
   try {
     return (await fetchCsv(education.scoreSheetCsv)).slice(1).filter((r) => r[0]?.trim());
@@ -16,7 +16,8 @@ async function scoreRows() {
 }
 
 export default async function EducationPage() {
-  const rows = await scoreRows();
+  const { education } = await getSettings();
+  const rows = await scoreRows(education);
   return (
     <main>
       <div className="page-head wrap">

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import CardViewer from "../CardViewer";
+import { cardSrc } from "@/lib/media";
 
 export default function MemberGrid({ members, teams }) {
   const [team, setTeam] = useState("all");
@@ -26,7 +28,7 @@ export default function MemberGrid({ members, teams }) {
           <button className="card" key={m.name} onClick={() => m.card && setOpen(m)}>
             <div className="frame">
               {m.card ? (
-                <img src={`/cards/${encodeURIComponent(m.card)}`} alt={`${m.company} ${m.name} 명함`} loading="lazy" />
+                <img src={cardSrc(m.card)} alt={`${m.company} ${m.name} 명함`} loading="lazy" />
               ) : (
                 <div className="placeholder">
                   <span className="ph-name">{m.name}</span>
@@ -43,11 +45,7 @@ export default function MemberGrid({ members, teams }) {
         ))}
       </div>
 
-      {open && (
-        <div className="lightbox" onClick={() => setOpen(null)} role="dialog" aria-label={`${open.name} 명함`}>
-          <img src={`/cards/${encodeURIComponent(open.card)}`} alt={`${open.company} ${open.name} 명함`} />
-        </div>
-      )}
+      {open && <CardViewer p={open} onClose={() => setOpen(null)} />}
     </>
   );
 }

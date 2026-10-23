@@ -1,12 +1,12 @@
-import { members as memberList, powerTeams } from "@/lib/data";
-import cards from "@/lib/cards.json";
+import { getMembers, getSettings } from "@/lib/store";
 import MemberGrid from "./MemberGrid";
 
-const members = memberList.map((m) => ({ ...m, card: cards[m.name]?.file ?? null }));
+export const revalidate = 60;
 
 export const metadata = { title: "멤버 · BNI 토파즈 챕터" };
 
-export default function MembersPage() {
+export default async function MembersPage() {
+  const [members, { power_teams: powerTeams }] = await Promise.all([getMembers(), getSettings()]);
   return (
     <main className="wrap">
       <div className="page-head">

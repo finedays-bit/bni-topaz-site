@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { chapter, members } from "@/lib/data";
+import { getMembers, getSettings } from "@/lib/store";
+
+export const revalidate = 60;
 
 const values = [
   { title: "Givers Gain®", body: "먼저 주는 사람이 더 많이 얻는다. 서로의 고객을 먼저 소개합니다." },
@@ -16,7 +18,8 @@ const flow = [
   "1:1 미팅 — 모임 밖에서 서로의 사업을 더 알아갑니다",
 ];
 
-export default function Home() {
+export default async function Home() {
+  const [{ chapter }, members] = await Promise.all([getSettings(), getMembers()]);
   return (
     <main>
       <section className="hero">
