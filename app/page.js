@@ -53,9 +53,7 @@ export default function Home() {
               <b>{members.length}<small>명</small></b>
               <span>활동 멤버</span>
             </div>
-          </div>
-          <p className="stats-note">{chapter.statsAsOf} · 부의장 보고</p>
-        </div>
+          </div>        </div>
       </section>
 
       <section className="band">
