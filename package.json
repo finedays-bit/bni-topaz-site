@@ -9,6 +9,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
-  }
+    "start": "next start",
+    "cards": "node scripts/sync-cards.mjs"
+  },
+  "type": "module"
 }

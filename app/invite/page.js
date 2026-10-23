@@ -65,7 +65,7 @@ export default function InvitePage() {
             <input type="checkbox" required />
             <span>참석 확인과 모임 안내를 위해 이름·연락처를 수집하는 데 동의합니다. (필수)</span>
           </label>
-          <button type="button" className="btn btn-gold" disabled>신청서 제출</button>
+          <button type="button" className="btn btn-main" disabled>신청서 제출</button>
           <p className="draft-note">화면 초안입니다 — 제출 기능은 2단계에서 연결됩니다.</p>
         </form>
       </section>

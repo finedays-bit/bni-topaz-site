@@ -1,5 +1,8 @@
-import { members, powerTeams } from "@/lib/data";
+import { members as memberList, powerTeams } from "@/lib/data";
+import cards from "@/lib/cards.json";
 import MemberGrid from "./MemberGrid";
+
+const members = memberList.map((m) => ({ ...m, card: cards[m.name]?.file ?? null }));
 
 export const metadata = { title: "멤버 · BNI 토파즈 챕터" };
 

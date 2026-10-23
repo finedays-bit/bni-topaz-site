@@ -26,7 +26,7 @@ export default function MemberGrid({ members, teams }) {
           <button className="card" key={m.name} onClick={() => m.card && setOpen(m)}>
             <div className="frame">
               {m.card ? (
-                <img src={`/cards/${m.card}`} alt={`${m.company} ${m.name} 명함`} loading="lazy" />
+                <img src={`/cards/${encodeURIComponent(m.card)}`} alt={`${m.company} ${m.name} 명함`} loading="lazy" />
               ) : (
                 <div className="placeholder">
                   <span className="ph-name">{m.name}</span>
@@ -36,6 +36,7 @@ export default function MemberGrid({ members, teams }) {
               )}
             </div>
             <div className="meta">
+              <span className="company">{m.company}</span>
               <b>{m.name}</b> · {m.specialty}
             </div>
           </button>
@@ -44,7 +45,7 @@ export default function MemberGrid({ members, teams }) {
 
       {open && (
         <div className="lightbox" onClick={() => setOpen(null)} role="dialog" aria-label={`${open.name} 명함`}>
-          <img src={`/cards/${open.card}`} alt={`${open.company} ${open.name} 명함`} />
+          <img src={`/cards/${encodeURIComponent(open.card)}`} alt={`${open.company} ${open.name} 명함`} />
         </div>
       )}
     </>

@@ -24,13 +24,13 @@ export default function Home() {
           <p className="eyebrow">{chapter.slogan}</p>
           <h1>
             서로의 고객을 소개하는<br />
-            <span className="gold">{chapter.region} 사업가들의 아침</span>
+            <span className="accent">{chapter.region} 사업가들의 아침</span>
           </h1>
           <p className="lead">
             BNI 토파즈 챕터는 업종마다 한 명씩, 서로 믿고 고객을 소개하는 비즈니스 모임입니다.
           </p>
           <div className="actions">
-            <Link href="/invite" className="btn btn-gold">이번 주 모임 참관 신청</Link>
+            <Link href="/invite" className="btn btn-main">이번 주 모임 참관 신청</Link>
             <Link href="/members" className="btn btn-line">멤버 둘러보기</Link>
           </div>
           <div className="meeting-chip">
@@ -87,7 +87,7 @@ export default function Home() {
           <p className="eyebrow">Visit</p>
           <h2>한 번 와서 직접 보세요</h2>
           <p>참관은 언제든 환영합니다. 명함만 챙겨 오시면 됩니다.</p>
-          <Link href="/invite" className="btn btn-gold">초대장 보기 · 참관 신청</Link>
+          <Link href="/invite" className="btn btn-main">초대장 보기 · 참관 신청</Link>
         </div>
       </section>
     </main>
