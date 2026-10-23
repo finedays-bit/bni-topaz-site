@@ -1,6 +1,6 @@
 import { Noto_Sans_KR, Noto_Serif_KR, Cinzel } from "next/font/google";
 import Link from "next/link";
-import { SITE_URL } from "@/lib/data";
+import { SITE_URL, links } from "@/lib/data";
 import "./globals.css";
 
 const sans = Noto_Sans_KR({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-sans" });
@@ -21,10 +21,16 @@ export default function RootLayout({ children }) {
           <Link href="/" className="brand">
             <span className="bni">BNI</span> TOPAZ
           </Link>
-          <nav>
+          <nav className="nav-links">
             <Link href="/members">멤버</Link>
-            <Link href="/invite" className="nav-cta">참관 신청</Link>
+            <Link href="/leadership">리더쉽팀</Link>
+            <Link href="/education">교육 정보</Link>
+            <Link href="/rps">RPS</Link>
           </nav>
+          <div className="nav-actions">
+            <Link href="/invite" className="nav-cta">참관 신청</Link>
+            <a href={links.bniConnect} className="nav-connect" target="_blank" rel="noopener noreferrer">BNI Connect</a>
+          </div>
         </header>
         {children}
         <footer className="footer">
@@ -35,6 +41,7 @@ export default function RootLayout({ children }) {
             <li><small>성장은 높게</small><b>GROW</b></li>
           </ul>
           <p className="vision-line">서로를 믿고 연결하며 함께 성장하는 토파즈</p>
+          <a href={links.bniConnect} className="footer-connect" target="_blank" rel="noopener noreferrer">BNI Connect 로그인 ↗</a>
           <p className="muted"><span className="bni">BNI</span> TOPAZ Chapter · 동탄</p>
         </footer>
       </body>

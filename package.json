@@ -10,7 +10,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "cards": "node scripts/sync-cards.mjs"
+    "cards": "node scripts/sync-cards.mjs",
+    "faces": "python scripts/make-faces.py"
   },
   "type": "module"
 }

@@ -1,4 +1,5 @@
 import { invite, members, formatKoreanDate } from "@/lib/data";
+import InviterField from "./InviterField";
 
 export const metadata = {
   title: "초대장 · BNI 토파즈 챕터",
@@ -54,13 +55,7 @@ export default function InvitePage() {
           <label>휴대폰 번호 *<input name="phone" type="tel" inputMode="numeric" required /></label>
           <label>회사명<input name="company" /></label>
           <label>사업 분야<input name="field" /></label>
-          <label>
-            초대한 멤버
-            <select name="inviter" defaultValue="">
-              <option value="">선택 안 함</option>
-              {members.map((m) => <option key={m.name}>{m.name} ({m.company})</option>)}
-            </select>
-          </label>
+          <InviterField members={members.map(({ name, company }) => ({ name, company }))} />
           <label className="agree">
             <input type="checkbox" required />
             <span>참석 확인과 모임 안내를 위해 이름·연락처를 수집하는 데 동의합니다. (필수)</span>

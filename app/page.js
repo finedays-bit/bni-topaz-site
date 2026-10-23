@@ -22,10 +22,10 @@ export default function Home() {
       <section className="hero">
         <div className="wrap">
           <p className="eyebrow">{chapter.slogan}</p>
-          <h1>
-            서로의 고객을 소개하는<br />
-            <span className="accent">{chapter.region} 사업가들의 아침</span>
+          <h1 className="cheer">
+            {chapter.cheer[0]} <span className="accent">{chapter.cheer[1]}</span>
           </h1>
+          <p className="hero-sub">서로의 고객을 소개하는 {chapter.region} 사업가들의 아침</p>
           <p className="lead">
             BNI 토파즈 챕터는 업종마다 한 명씩, 서로 믿고 고객을 소개하는 비즈니스 모임입니다.
           </p>
