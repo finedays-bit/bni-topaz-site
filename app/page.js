@@ -54,6 +54,7 @@ export default function Home() {
               <span>활동 멤버</span>
             </div>
           </div>
+          <p className="stats-note">{chapter.statsAsOf} · 부의장 보고</p>
         </div>
       </section>
 
