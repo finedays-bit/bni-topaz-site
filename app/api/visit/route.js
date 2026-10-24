@@ -27,7 +27,7 @@ export async function POST(request) {
 
   // 운영진 메일 (실패해도 신청은 저장한다)
   const [{ leadership, invite }, people] = await Promise.all([getSettings(), getPeople()]);
-  const { emails } = recipients(leadership, people, v.inviter);
+  const { emails } = recipients(leadership, people);
   const whenText = `${formatKoreanDate(v.visit_date)} ${invite.time ?? ""}`.trim();
   let notified = false;
   if (mailReady() && emails.length) {

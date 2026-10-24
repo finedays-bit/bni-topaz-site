@@ -70,7 +70,7 @@ export default function VisitorsTab() {
           <button className="adm-btn" onClick={openSheet}>구글 시트로 열기</button>
         </div>
       </div>
-      <p className="muted">신청이 들어오면 비지터 호스트 리더, 신청서에서 고른 '초대한 멤버', 공용 메일로 알림이 갑니다. 비지터 호스트 리더는 '리더십팀' 탭의 직책으로, 메일 주소는 각자의 멤버 정보에서 자동으로 찾습니다.</p>
+      <p className="muted">신청이 들어오면 비지터 호스트 리더·의장·부의장·ST와 공용 메일로 알림이 갑니다. 받는 사람은 '리더십팀' 탭의 직책과 각자의 멤버 이메일로 자동으로 정해집니다.</p>
       {msg && <p className="adm-msg">{msg}</p>}
       {rows.length === 0 && <p className="muted">아직 신청이 없습니다.</p>}
       <div className="visit-list">
