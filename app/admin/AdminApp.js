@@ -6,11 +6,13 @@ import MembersTab from "./MembersTab";
 import { AboutTab, ChapterTab, InviteTab, EducationTab, LeadershipTab, LinksTab } from "./SettingsTabs";
 import MigrateTab from "./MigrateTab";
 import VisitorsTab from "./VisitorsTab";
+import WantedTab from "./WantedTab";
 
 const TABS = [
   ["visitors", "참관 신청"],
   ["members", "멤버·명함"],
   ["leadership", "리더십팀"],
+  ["wanted", "찾는 분야"],
   ["invite", "이번 주 초대장"],
   ["about", "챕터 소개글"],
   ["chapter", "구호·모임·숫자"],
@@ -65,6 +67,7 @@ export default function AdminApp() {
       {tab === "visitors" && <VisitorsTab />}
       {tab === "members" && <MembersTab />}
       {tab === "leadership" && <LeadershipTab />}
+      {tab === "wanted" && <WantedTab />}
       {tab === "invite" && <InviteTab />}
       {tab === "about" && <AboutTab />}
       {tab === "chapter" && <ChapterTab />}

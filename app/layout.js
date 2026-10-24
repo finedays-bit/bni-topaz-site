@@ -28,6 +28,7 @@ export default async function RootLayout({ children }) {
           <nav className="nav-links">
             <Link href="/about">챕터 소개</Link>
             <Link href="/members">멤버</Link>
+            <Link href="/wanted">찾는 분야</Link>
             <Link href="/leadership">리더십팀</Link>
             <Link href="/education">교육 정보</Link>
             <Link href="/rps">RPS</Link>

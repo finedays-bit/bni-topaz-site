@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getMembers, getSettings } from "@/lib/store";
+import WantedFields from "./WantedFields";
 
 export const revalidate = 60;
 
@@ -19,7 +20,7 @@ const flow = [
 ];
 
 export default async function Home() {
-  const [{ chapter }, members] = await Promise.all([getSettings(), getMembers()]);
+  const [{ chapter, wanted }, members] = await Promise.all([getSettings(), getMembers()]);
   return (
     <main>
       <section className="hero">
@@ -40,6 +41,15 @@ export default async function Home() {
             <span><b>{chapter.meetingDay}</b> {chapter.meetingTime}</span>
             <span>{chapter.venue}</span>
           </div>
+        </div>
+      </section>
+
+      <section className="band">
+        <div className="wrap">
+          <p className="eyebrow">We&apos;re Looking For</p>
+          <h2>토파즈가 지금 가장 찾는 전문분야</h2>
+          <p className="muted">아래 다섯 분야의 대표님을 1순위로 모십니다. 한 업종에 한 명 — 먼저 오시는 분이 그 자리를 갖습니다.</p>
+          <WantedFields wanted={wanted} />
         </div>
       </section>
 

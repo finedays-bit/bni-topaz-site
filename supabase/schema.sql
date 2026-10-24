@@ -38,6 +38,7 @@ create table if not exists public.members (
 );
 alter table public.members add column if not exists leader_only boolean not null default false;
 alter table public.members add column if not exists face text;
+alter table public.members add column if not exists card_data jsonb; -- 명함 만들기 입력값 + 원본 사진·로고 주소
 
 -- 3. 사이트 설정 (리더십팀·교육·초대장·실적 숫자 등, 항목마다 한 줄) ------------
 create table if not exists public.settings (
