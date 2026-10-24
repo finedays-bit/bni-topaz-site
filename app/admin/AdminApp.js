@@ -7,6 +7,7 @@ import { AboutTab, ChapterTab, InviteTab, EducationTab, LeadershipTab, LinksTab 
 import MigrateTab from "./MigrateTab";
 import VisitorsTab from "./VisitorsTab";
 import WantedTab from "./WantedTab";
+import HelpTab from "./HelpTab";
 
 const TABS = [
   ["visitors", "참관 신청"],
@@ -19,6 +20,7 @@ const TABS = [
   ["education", "교육 정보"],
   ["links", "RPS·링크"],
   ["migrate", "사진 옮기기"],
+  ["help", "도움말"],
 ];
 
 // 관리자 화면: 로그인 → 관리자 확인 → 탭별 수정
@@ -68,6 +70,7 @@ export default function AdminApp() {
       {tab === "members" && <MembersTab />}
       {tab === "leadership" && <LeadershipTab />}
       {tab === "wanted" && <WantedTab />}
+      {tab === "help" && <HelpTab />}
       {tab === "invite" && <InviteTab />}
       {tab === "about" && <AboutTab />}
       {tab === "chapter" && <ChapterTab />}
@@ -97,7 +100,7 @@ function LoginBox() {
   return (
     <main className="admin admin-narrow">
       <h1>관리자 로그인</h1>
-      <p className="muted">챕터 공용 관리자 메일을 넣으면 로그인 링크를 보내 드립니다.</p>
+      <p className="muted">관리자로 등록된 메일을 넣으면 로그인 링크를 보내 드립니다. 링크는 이 휴대폰(이 인터넷 앱)에서 눌러 주세요.</p>
       {failed && <p className="adm-err">로그인 링크가 만료되었거나 이미 사용되었습니다. 다시 받아 주세요.</p>}
       <form onSubmit={send} className="adm-form">
         <label>관리자 메일<input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></label>

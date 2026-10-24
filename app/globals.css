@@ -380,7 +380,11 @@ a.edu-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(23, 
 .g-tip b:first-child { display: block; color: #a8742f; font-size: 14px; margin-bottom: 2px; }
 .g-note { background: var(--band); }
 .g-end { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
-@media (max-width: 560px) { .g-sec { padding: 20px 16px; } .g-toc { grid-template-columns: 1fr; } }
+.g-url { display: block; margin-top: 4px; font-weight: 700; font-size: 0.92em; color: var(--accent-deep); overflow-wrap: anywhere; }
+@media (max-width: 560px) {
+  .g-sec { padding: 20px 16px; } .g-toc { grid-template-columns: 1fr; }
+  .adm-panel.guide { padding: 16px 0; background: transparent; border: 0; box-shadow: none; } /* 관리자 도움말: 상자 안 상자로 좁아지지 않게 */
+}
 @media print {
   .nav, .footer, .no-print, .g-toc { display: none !important; }
   body { background: #fff; }
