@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getMembers, getSettings } from "@/lib/store";
 import WantedFields from "./WantedFields";
+import InviteCard, { inviteWhen } from "./invite/InviteCard";
+import ShareButtons from "./invite/ShareButtons";
 
 export const revalidate = 60;
 
@@ -20,7 +22,7 @@ const flow = [
 ];
 
 export default async function Home() {
-  const [{ chapter, wanted }, members] = await Promise.all([getSettings(), getMembers()]);
+  const [{ chapter, wanted, invite }, members] = await Promise.all([getSettings(), getMembers()]);
   return (
     <main>
       <section className="hero">
@@ -42,6 +44,14 @@ export default async function Home() {
             <span>{chapter.venue}</span>
           </div>
         </div>
+      </section>
+
+      <section className="invite-bg home-invite">
+        <InviteCard invite={{ ...invite, account: "" }} withAccount={false} />
+        <div className="share">
+          <Link href="/invite#apply" className="btn invite-cta">참관 신청하기 →</Link>
+        </div>
+        <ShareButtons text={`${inviteWhen(invite)} BNI 토파즈 챕터 비즈니스 조찬모임에 초대합니다.`} />
       </section>
 
       <section className="band">
