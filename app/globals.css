@@ -402,7 +402,9 @@ a.edu-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(23, 
 .about { max-width: 880px; padding-top: 16px; }
 .about-hero { text-align: center; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 36px 20px 30px; background-image: var(--facets); }
 .about-hero img { width: min(100%, 520px); margin: 0 auto 18px; }
-.about-hero h2 { font-size: clamp(22px, 4.4vw, 32px); margin: 0; color: var(--accent-deep); }
+.about-hero h2 { font-size: clamp(22px, 4.4vw, 32px); margin: 0; color: var(--accent-deep); line-height: 1.4; }
+.m-br { display: none; }
+@media (max-width: 640px) { .m-br { display: inline; } }
 .about-sub { font-family: var(--font-display); letter-spacing: 0.3em; font-size: 13px; color: var(--accent); margin-top: 6px; }
 .about-body { margin: 32px auto 0; display: grid; gap: 16px; font-size: 16px; line-height: 1.9; color: var(--ink); }
 .about-values { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }

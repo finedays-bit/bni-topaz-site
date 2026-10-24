@@ -34,7 +34,10 @@ export default async function AboutPage() {
       <section className="wrap about">
         <div className="about-hero">
           <img src="/brand/topaz-main.png" alt="TOPAZ CHAPTER — DONGTAN · HWASEONG · GLOBAL" />
-          <h2>{about.headline}</h2>
+          {/* 휴대폰에서는 쉼표 뒤에서 줄을 바꿔 '신뢰.'만 홀로 떨어지지 않게 (넓은 화면은 한 줄) */}
+          <h2>{(about.headline ?? "").split(/(?<=,)\s*/).map((part, i) => (
+            <span key={i}>{i > 0 && <br className="m-br" />}{part}{i > 0 ? "" : " "}</span>
+          ))}</h2>
           <p className="about-sub">{about.sub}</p>
         </div>
 
