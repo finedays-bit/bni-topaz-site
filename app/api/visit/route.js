@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { formatKoreanDate } from "@/lib/data";
 import { getPeople, getSettings } from "@/lib/store";
 import { mailReady, recipients, sendVisitMail } from "@/lib/notify";
+import { VISITOR_HEADER, visitorRows } from "@/lib/visitorSheet";
 
 // 참관 신청 받기 → 운영진 메일 → Supabase 저장
 const clean = (s, max) => String(s ?? "").trim().slice(0, max);
@@ -48,5 +49,25 @@ export async function POST(request) {
     console.error("참관 신청 저장 실패:", res.status, await res.text());
     return NextResponse.json({ error: notified ? "신청이 운영진에게 전달되었지만 저장 중 문제가 생겼습니다." : "신청을 저장하지 못했습니다. 잠시 후 다시 시도해 주세요." }, { status: notified ? 200 : 500 });
   }
+  await appendToSheet({ ...v, created_at: new Date().toISOString(), status: "신규", notified });
   return NextResponse.json({ ok: true, notified });
+}
+
+// 관리자 구글 시트 맨 위에 한 줄 추가 (scripts/visitors-sheet.gs) — 실패해도 신청은 이미 저장됐으니 넘어간다
+async function appendToSheet(row) {
+  const hook = process.env.VISITOR_SHEET_WEBHOOK;
+  if (!hook) return;
+  try {
+    const res = await fetch(hook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mode: "append", header: VISITOR_HEADER, row: visitorRows([row])[0] }),
+      redirect: "follow",
+      signal: AbortSignal.timeout(10000),
+    });
+    const out = await res.json();
+    if (!out.ok) throw new Error(out.error);
+  } catch (e) {
+    console.error("참관 신청 시트 기록 실패:", e.message);
+  }
 }

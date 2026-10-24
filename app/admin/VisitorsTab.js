@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { formatKoreanDate } from "@/lib/data";
+import { VISITOR_HEADER, toCsv, visitorRows } from "@/lib/visitorSheet";
 
 const STATUSES = ["신규", "연락함", "참석", "가입", "취소"];
 
@@ -33,13 +34,41 @@ export default function VisitorsTab() {
     setRows((rs) => rs.filter((x) => x.id !== r.id));
   }
 
+  // 엑셀(CSV)로 내려받기 — 이 컴퓨터에서 바로 만든다
+  function download() {
+    const blob = new Blob([toCsv([VISITOR_HEADER, ...visitorRows(rows)])], { type: "text/csv;charset=utf-8" });
+    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `토파즈_참관신청_${new Date().toISOString().slice(0, 10)}.csv` });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // 관리자 구글 시트에 지금 목록을 새로 써 넣고 연다 (창은 먼저 열어 둬야 막히지 않는다)
+  async function openSheet() {
+    const win = window.open("about:blank", "_blank");
+    setMsg("구글 시트에 옮기는 중…");
+    try {
+      const res = await fetch("/api/visitors-sheet", { method: "POST" });
+      const out = await res.json();
+      if (!res.ok) throw new Error(out.error);
+      if (win) win.location.href = out.url; else window.open(out.url, "_blank");
+      setMsg(`구글 시트에 ${out.count}건을 옮겼습니다. (관리자 Gmail로 로그인돼 있어야 열립니다)`);
+    } catch (err) {
+      win?.close();
+      setMsg(err.message);
+    }
+  }
+
   if (!rows) return <section className="adm-panel"><p className="muted">{msg || "불러오는 중…"}</p></section>;
 
   return (
     <section className="adm-panel">
       <div className="adm-row">
         <h2>참관 신청 {rows.length}건 · 신규 {rows.filter((r) => r.status === "신규").length}건</h2>
-        <button className="adm-btn" onClick={load}>새로고침</button>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          <button className="adm-btn" onClick={load}>새로고침</button>
+          <button className="adm-btn" onClick={download} disabled={!rows.length}>엑셀(CSV) 내려받기</button>
+          <button className="adm-btn" onClick={openSheet}>구글 시트로 열기</button>
+        </div>
       </div>
       <p className="muted">신청이 들어오면 비지터 호스트 리더·의장·부의장·ST와 공용 메일로 알림이 갑니다. 받는 사람은 '리더십팀' 탭의 직책과 각자의 멤버 이메일로 자동으로 정해집니다.</p>
       {msg && <p className="adm-msg">{msg}</p>}

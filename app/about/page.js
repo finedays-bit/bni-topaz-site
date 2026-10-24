@@ -56,7 +56,7 @@ export default async function AboutPage() {
         <div className="panel about-meet">
           <div><small>일시</small><b>{chapter.meetingDay} {chapter.meetingTime}</b></div>
           <div><small>장소</small><b>{chapter.venue}</b></div>
-          <div><small>멤버</small><b>{members.length}명 · 한 분야 한 명</b></div>
+          <div><small>멤버</small><b>{chapter.showMemberCount ? `${members.length}명 · ` : ""}한 분야 한 명</b></div>
         </div>
 
         <blockquote className="about-closing">

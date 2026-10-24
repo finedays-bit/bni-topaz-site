@@ -203,15 +203,11 @@ h2 { font-size: clamp(24px, 4vw, 32px); margin: 8px 0 20px; }
 .inv-sub { font-family: var(--font-serif); font-size: clamp(20px, 5vw, 26px); color: #4a2f12; margin: 14px 0 18px; }
 .inv-body { font-size: 15px; color: #3d4466; line-height: 1.8; }
 .inv-body + .inv-body { margin-top: 14px; }
-.seal {
-  width: 96px; height: 96px; margin: 28px auto; border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #e0b878, #a8742f 55%, #6e4716);
-  box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.12), 0 6px 14px rgba(110, 71, 22, 0.35);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  color: #fff6e6; font-family: var(--font-display); line-height: 1.1;
-}
-.seal b { font-size: 20px; }
-.seal span { font-size: 10px; letter-spacing: 0.15em; }
+/* 가운데 원형 도장 대신: 금색 가는 선 + 토파즈 보석 마름모 */
+.inv-divider { display: flex; align-items: center; gap: 12px; max-width: 240px; margin: 30px auto 26px; }
+.inv-divider::before, .inv-divider::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-light)); }
+.inv-divider::after { background: linear-gradient(90deg, var(--gold-light), transparent); }
+.inv-divider span { width: 10px; height: 10px; transform: rotate(45deg); background: linear-gradient(135deg, var(--accent-light), var(--accent-deep)); box-shadow: 0 0 0 3px #fffdf8, 0 0 0 4px var(--gold-light); }
 .inv-table { width: 100%; text-align: left; border-collapse: collapse; font-size: 15px; }
 .inv-table th { width: 92px; color: var(--gold-deep); font-weight: 700; padding: 8px 10px 8px 0; vertical-align: top; white-space: nowrap; }
 .inv-table td { padding: 8px 0 8px 12px; border-left: 1px solid var(--gold-light); }

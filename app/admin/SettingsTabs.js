@@ -111,13 +111,20 @@ export function ChapterTab() {
       </div>
       <h3 className="adm-sub">메인 화면 실적 숫자 (부의장 보고 기준)</h3>
       {stats.map((s, i) => (
-        <div className="adm-grid adm-grid3" key={i}>
-          <Field label="이름" value={s.label} onChange={(x) => set("stats")(patch(stats, i, { label: x }))} />
+        <div className="adm-grid" key={i} style={{ gridTemplateColumns: "2fr 1fr 1fr auto", alignItems: "end" }}>
+          <Field label="이름" value={s.label} onChange={(x) => set("stats")(patch(stats, i, { label: x }))} placeholder="다녀간 비지터" />
           <Field label="숫자" value={s.value} onChange={(x) => set("stats")(patch(stats, i, { value: x }))} />
           <Field label="단위" value={s.unit} onChange={(x) => set("stats")(patch(stats, i, { unit: x }))} />
+          <button className="adm-btn adm-danger" style={{ marginBottom: 10 }} onClick={() => set("stats")(stats.filter((_, j) => j !== i))}>삭제</button>
         </div>
       ))}
-      <p className="muted">'활동 멤버 수'는 멤버 목록에서 자동으로 셉니다.</p>
+      <button className="adm-btn" onClick={() => set("stats")([...stats, { label: "", value: "", unit: "" }])}>+ 숫자 추가</button>
+      <div className="adm-checks">
+        <label>
+          <input type="checkbox" checked={!!v.showMemberCount} onChange={(e) => set("showMemberCount")(e.target.checked)} />
+          {" "}활동 멤버 수 표시 (멤버 목록에서 자동으로 셈 · 끄면 첫 페이지와 챕터 소개에서 인원이 빠집니다)
+        </label>
+      </div>
       <SaveBar onSave={save} status={status} />
     </section>
   );

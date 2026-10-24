@@ -72,10 +72,12 @@ export default async function Home() {
                 <span>{s.label}</span>
               </div>
             ))}
-            <div className="stat">
-              <b>{members.length}<small>명</small></b>
-              <span>활동 멤버</span>
-            </div>
+            {chapter.showMemberCount && (
+              <div className="stat">
+                <b>{members.length}<small>명</small></b>
+                <span>활동 멤버</span>
+              </div>
+            )}
           </div>        </div>
       </section>
 

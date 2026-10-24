@@ -33,7 +33,7 @@ export default function InviteCard({ invite, withAccount = true }) {
         대표님의 업종에 정기적으로 고객을 소개해 드릴 수 있는{" "}
         제가 신뢰하는 사업가들의 협업 모임에 초대합니다.
       </p>
-      <div className="seal"><b>BNI</b><span>TOPAZ</span></div>
+      <div className="inv-divider" aria-hidden="true"><span /></div>
       <table className="inv-table">
         <tbody>
           {rows.map(([k, v]) => (
