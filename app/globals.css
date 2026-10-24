@@ -23,7 +23,7 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; } /* 휴대폰에서 누를 때 생기는 네모난 검은/회색 그림자 없애기 */
 body {
   background: var(--bg);
   color: var(--ink);
@@ -73,8 +73,13 @@ h2 { font-size: clamp(24px, 4vw, 32px); margin: 8px 0 20px; }
 .btn {
   display: inline-block; padding: 13px 26px; border-radius: 999px;
   font-weight: 700; font-size: 16px; border: 1.5px solid var(--accent);
+  -webkit-appearance: none; appearance: none; background-clip: padding-box; outline: none;
+  transition: transform 0.12s ease, filter 0.12s ease;
 }
-.btn-main { background: linear-gradient(135deg, var(--accent-light), var(--accent) 50%, var(--accent-deep)); color: #fff; border-color: transparent; box-shadow: 0 6px 16px rgba(43, 101, 200, 0.28); }
+button.btn { font-family: inherit; line-height: inherit; cursor: pointer; }
+.btn:active { transform: scale(0.97); filter: brightness(0.96); }
+.btn:focus-visible { box-shadow: 0 0 0 3px rgba(43, 101, 200, 0.35); }
+.btn-main { background: linear-gradient(135deg, var(--accent-light), var(--accent) 50%, var(--accent-deep)); color: #fff; border-color: transparent; box-shadow: 0 4px 12px rgba(43, 101, 200, 0.2); }
 .btn-line { color: var(--accent-deep); }
 
 /* 메인: 히어로 */
@@ -251,7 +256,7 @@ h2 { font-size: clamp(24px, 4vw, 32px); margin: 8px 0 20px; }
 .share { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
 .home-invite { padding-bottom: 48px; }
 .home-invite .share + .share { margin-top: 10px; }
-.invite-cta { width: min(100%, 418px); text-align: center; background: #fff; color: var(--accent-deep); border-color: #fff; font-weight: 800; box-shadow: 0 8px 20px rgba(10, 30, 80, 0.25); }
+.invite-cta { width: min(100%, 418px); text-align: center; background: #fff; color: var(--accent-deep); border-color: #fff; font-weight: 800; box-shadow: 0 4px 14px rgba(10, 30, 80, 0.12); }
 
 .footer { text-align: center; padding: 48px 16px 40px; background: var(--navy); color: #dbe6fa; font-size: 14px; }
 .footer .muted { color: #8ea6cf; margin-top: 18px; font-size: 13px; }
@@ -415,7 +420,9 @@ a.edu-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(23, 
 .about-meet small { display: block; font-size: 12px; color: var(--ink-soft); }
 .about-meet b { font-size: 15px; }
 .about-closing { margin: 40px 0 0; padding: 26px 20px; text-align: center; font-family: var(--font-serif); font-size: clamp(17px, 3.2vw, 21px); line-height: 1.8; color: var(--accent-deep); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.about-closing span { display: block; }
+.about-closing span { display: block; word-break: keep-all; text-wrap: balance; } /* 단어 중간에서 끊지 않고, 넘칠 땐 두 줄을 비슷한 길이로 */
+.about-closing span + span { margin-top: 6px; }
+@media (max-width: 560px) { .about-closing { padding: 22px 6px; font-size: 16.5px; line-height: 1.7; } }
 .about-cta { text-align: center; margin-top: 32px; color: var(--ink-soft); }
 .about-cta .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
 @media (max-width: 560px) {
