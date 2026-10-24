@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getMembers, getSettings } from "@/lib/store";
 import WantedFields from "./WantedFields";
-import InviteCard, { inviteWhen } from "./invite/InviteCard";
+import InviteCard, { VenueText, inviteWhen } from "./invite/InviteCard";
 import ShareButtons from "./invite/ShareButtons";
 
 export const revalidate = 60;
@@ -41,7 +41,7 @@ export default async function Home() {
           </div>
           <div className="meeting-chip">
             <span><b>{chapter.meetingDay}</b> {chapter.meetingTime}</span>
-            <span>{chapter.venue}</span>
+            <span><VenueText venue={chapter.venue} map /></span>
           </div>
         </div>
       </section>

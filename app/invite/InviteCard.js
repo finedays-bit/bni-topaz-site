@@ -1,20 +1,36 @@
 import { formatKoreanDate } from "@/lib/data";
 import { meetingDate } from "@/lib/invite";
+import CopyAccount from "./CopyAccount";
 
 // 초대장 카드 — 초대장 페이지와 첫 페이지가 같이 쓴다
 // withAccount: 참가비 계좌까지 보여 줄지 (첫 페이지는 검색에 잘 걸려서 계좌를 빼고 초대장 페이지에만 둔다)
 // 3기 비전 (사이트 맨 아래와 같은 세 줄)
 const VISION = [["멘토링은 깊게", "MENTOR"], ["연결은 넓게", "CONNECT"], ["성장은 높게", "GROW"]];
 
+// 주소의 괄호 부분("(구 우정바이오신약클러스터)")은 어중간하게 끊기지 않게 다음 줄로
+// map: 누르면 네이버 지도에서 도로명 주소(번지까지)를 찾는다 — 휴대폰은 지도 앱으로 열림
+export function VenueText({ venue, map = false }) {
+  const m = venue?.match(/^(.*?)\s*(\([^)]*\))\s*(.*)$/);
+  const text = m ? <>{`${m[1]} ${m[3]}`.trim()}<br /><span className="venue-old">{m[2]}</span></> : venue ?? "";
+  if (!map || !venue) return text;
+  return (
+    <a className="venue-map" href={naverMap(venue)} target="_blank" rel="noopener noreferrer">
+      {text}<span className="venue-map-tag">네이버 지도 ↗</span>
+    </a>
+  );
+}
+export const naverMap = (venue) =>
+  `https://map.naver.com/p/search/${encodeURIComponent(venue.match(/^.*?\d+(?:-\d+)?(?=\s|\(|$)/)?.[0] ?? venue)}`;
+
 export const inviteWhen = (invite) => `${formatKoreanDate(meetingDate(invite))} ${invite.time}`;
 
 export default function InviteCard({ invite, withAccount = true }) {
   const rows = [
-    ["일 시", inviteWhen(invite)],
-    ["장 소", invite.venue],
+    ["일 시", <span className="inv-when">{inviteWhen(invite)}</span>],
+    ["장 소", <VenueText venue={invite.venue} map />],
     ["드레스코드", invite.dressCode],
     ["준 비 물", invite.bring],
-    ["참 가 비", withAccount ? <>{invite.fee}<br /><span className="nowrap">{invite.account}</span></> : invite.fee],
+    ["참 가 비", withAccount ? <>{invite.fee}<br /><CopyAccount account={invite.account} /></> : invite.fee],
   ];
   return (
     <article className="invitation">

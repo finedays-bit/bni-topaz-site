@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getMembers, getSettings } from "@/lib/store";
 import Icon from "../Icon";
+import { VenueText } from "../invite/InviteCard";
 
 export const metadata = {
   title: "챕터 소개 · BNI 토파즈 챕터",
@@ -55,7 +56,7 @@ export default async function AboutPage() {
         <h2 className="sub-h">정기 모임 안내</h2>
         <div className="panel about-meet">
           <div><small>일시</small><b>{chapter.meetingDay} {chapter.meetingTime}</b></div>
-          <div><small>장소</small><b>{chapter.venue}</b></div>
+          <div><small>장소</small><b><VenueText venue={chapter.venue} map /></b></div>
           <div><small>멤버</small><b>{chapter.showMemberCount ? `${members.length}명 · ` : ""}한 분야 한 명</b></div>
         </div>
 
