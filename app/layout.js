@@ -32,6 +32,7 @@ export default async function RootLayout({ children }) {
             <Link href="/leadership">리더십팀</Link>
             <Link href="/education">교육 정보</Link>
             <Link href="/rps">RPS</Link>
+            <Link href="/guide">이용 안내</Link>
           </nav>
           <div className="nav-actions">
             {links.instagram && (
@@ -53,6 +54,7 @@ export default async function RootLayout({ children }) {
           </ul>
           <p className="vision-line">서로를 믿고 연결하며 함께 성장하는 토파즈</p>
           <div className="footer-links">
+            <Link href="/guide" className="footer-connect">사이트 이용 안내</Link>
             <a href={links.bniConnect} className="footer-connect" target="_blank" rel="noopener noreferrer">BNI Connect 로그인 ↗</a>
             {links.instagram && (
               <a href={links.instagram} className="footer-connect" target="_blank" rel="noopener noreferrer">
