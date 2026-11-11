@@ -9,6 +9,7 @@ import VisitorsTab from "./VisitorsTab";
 import WantedTab from "./WantedTab";
 import HelpTab from "./HelpTab";
 import AccountsTab, { loginEmail } from "./AccountsTab";
+import { canUse } from "@/lib/adminPerms";
 
 const TABS = [
   ["visitors", "참관 신청"],
@@ -31,7 +32,12 @@ export default function AdminApp() {
   const [email, setEmail] = useState("");
   const [tab, setTab] = useState("visitors");
   const [pwOpen, setPwOpen] = useState(false);
-  const [master, setMaster] = useState(false);
+  const [access, setAccess] = useState({ master: false, perms: null }); // perms null = 전체
+  const master = access.master;
+  // 권한 없는 탭이 열려 있으면 볼 수 있는 첫 탭으로
+  useEffect(() => {
+    if (!canUse(access, tab)) setTab(([...TABS].find(([k]) => canUse(access, k)) ?? ["help"])[0]);
+  }, [access]);
 
   useEffect(() => {
     (async () => {
@@ -39,7 +45,12 @@ export default function AdminApp() {
       if (!data.user) return setState("login");
       setEmail(data.user.email);
       const { data: ok } = await sb.rpc("is_admin");
-      if (ok) { const { data: m } = await sb.rpc("is_master"); setMaster(!!m); }
+      if (ok) {
+        // 내 권한 (admin-perms.sql 실행 전이면 전체 권한 + 마스터 여부만)
+        const { data: a, error } = await sb.rpc("my_access");
+        if (!error && a) setAccess({ master: !!a.master, perms: a.perms ?? null });
+        else { const { data: m } = await sb.rpc("is_master"); setAccess({ master: !!m, perms: null }); }
+      }
       setState(ok ? "ready" : "denied");
     })();
   }, [sb]);
@@ -68,22 +79,22 @@ export default function AdminApp() {
       </div>
       {pwOpen && <PasswordBox onClose={() => setPwOpen(false)} />}
       <nav className="admin-tabs">
-        {[...TABS, ...(master ? [["accounts", "관리자 계정"]] : [])].map(([k, label]) => (
+        {[...TABS, ["accounts", "관리자 계정"]].filter(([k]) => canUse(access, k)).map(([k, label]) => (
           <button key={k} aria-pressed={tab === k} onClick={() => setTab(k)}>{label}</button>
         ))}
       </nav>
-      {tab === "visitors" && <VisitorsTab />}
-      {tab === "members" && <MembersTab />}
-      {tab === "leadership" && <LeadershipTab />}
-      {tab === "wanted" && <WantedTab />}
-      {tab === "help" && <HelpTab />}
+      {tab === "visitors" && canUse(access, "visitors") && <VisitorsTab />}
+      {tab === "members" && canUse(access, "members") && <MembersTab />}
+      {tab === "leadership" && canUse(access, "leadership") && <LeadershipTab />}
+      {tab === "wanted" && canUse(access, "wanted") && <WantedTab />}
+      {tab === "help" && canUse(access, "help") && <HelpTab />}
       {tab === "accounts" && master && <AccountsTab me={email} />}
-      {tab === "invite" && <InviteTab />}
-      {tab === "about" && <AboutTab />}
-      {tab === "chapter" && <ChapterTab />}
-      {tab === "education" && <EducationTab />}
-      {tab === "links" && <LinksTab />}
-      {tab === "migrate" && <MigrateTab />}
+      {tab === "invite" && canUse(access, "invite") && <InviteTab />}
+      {tab === "about" && canUse(access, "about") && <AboutTab />}
+      {tab === "chapter" && canUse(access, "chapter") && <ChapterTab />}
+      {tab === "education" && canUse(access, "education") && <EducationTab />}
+      {tab === "links" && canUse(access, "links") && <LinksTab />}
+      {tab === "migrate" && canUse(access, "migrate") && <MigrateTab />}
     </main>
   );
 }

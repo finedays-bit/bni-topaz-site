@@ -611,3 +611,8 @@ a.edu-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(23, 
 .adm-acc small { display: block; font-size: 12px; color: var(--ink-soft); }
 .adm-acc-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .adm-acc-actions input { font: inherit; font-size: 13px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 8px; width: 130px; }
+.adm-perms { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0; }
+.adm-perms legend { font-size: 13px; font-weight: 500; padding: 0 4px; }
+.adm-perm-all { flex-basis: 100%; font-weight: 700; }
+.adm-acc { flex-wrap: wrap; }
+.adm-acc-perms { flex-basis: 100%; display: grid; gap: 8px; justify-items: start; }

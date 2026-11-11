@@ -6,8 +6,10 @@ import { VISITOR_HEADER, visitorRows } from "@/lib/visitorSheet";
 // VISITOR_SHEET_WEBHOOK: 시트에 붙인 Apps Script 배포 주소 (scripts/visitors-sheet.gs) — 비밀번호처럼 .env.local 에만
 export async function POST() {
   const sb = await supabaseServer();
-  const { data: isAdmin } = await sb.rpc("is_admin");
-  if (!isAdmin) return NextResponse.json({ error: "관리자만 쓸 수 있습니다." }, { status: 403 });
+  // 참관 신청 권한 (admin-perms.sql 실행 전이면 관리자 여부로)
+  let { data: isAdmin, error: permErr } = await sb.rpc("has_perm", { p: "visitors" });
+  if (permErr) ({ data: isAdmin } = await sb.rpc("is_admin"));
+  if (!isAdmin) return NextResponse.json({ error: "참관 신청 권한이 있는 관리자만 쓸 수 있습니다." }, { status: 403 });
   const hook = process.env.VISITOR_SHEET_WEBHOOK;
   if (!hook) return NextResponse.json({ error: "구글 시트가 아직 연결되지 않았습니다 (.env.local 의 VISITOR_SHEET_WEBHOOK)." }, { status: 503 });
 

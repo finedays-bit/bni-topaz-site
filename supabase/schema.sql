@@ -123,3 +123,4 @@ create policy "관리자만 신청 지우기" on public.visitors for delete usin
 
 -- 7. 멤버가 만든 초대장 → supabase/invitations.sql 참고 (같은 내용)
 -- 8. 관리자 아이디·비밀번호(마스터가 부여) → supabase/admin-logins.sql 참고
+-- 9. 관리자별 편집 권한 → supabase/admin-perms.sql 참고
