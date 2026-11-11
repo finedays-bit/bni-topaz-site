@@ -42,7 +42,6 @@ export default async function RootLayout({ children }) {
             )}
             <Link href="/invite" className="nav-cta">참관 신청</Link>
             <a href={links.bniConnect} className="nav-connect" target="_blank" rel="noopener noreferrer">BNI Connect</a>
-            <Link href="/admin" className="nav-admin" aria-label="관리자 로그인">관리자</Link>
           </div>
         </header>
         {children}
@@ -67,6 +66,8 @@ export default async function RootLayout({ children }) {
             <img className="fm-bni" src="/brand/bni-logo.png" alt="BNI" width="200" height="77" />
             <img className="fm-topaz" src="/brand/topaz-logo-dark.png" alt="TOPAZ CHAPTER — DONGTAN · HWASEONG · GLOBAL" width="600" height="210" />
           </p>
+          {/* 관리자 입구: 눈에 띄지 않게 맨 아래 오른쪽 */}
+          <Link href="/admin" className="footer-admin" rel="nofollow">관리자</Link>
         </footer>
       </body>
     </html>

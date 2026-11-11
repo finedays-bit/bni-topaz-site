@@ -8,6 +8,7 @@ import MigrateTab from "./MigrateTab";
 import VisitorsTab from "./VisitorsTab";
 import WantedTab from "./WantedTab";
 import HelpTab from "./HelpTab";
+import AccountsTab, { loginEmail } from "./AccountsTab";
 
 const TABS = [
   ["visitors", "참관 신청"],
@@ -30,6 +31,7 @@ export default function AdminApp() {
   const [email, setEmail] = useState("");
   const [tab, setTab] = useState("visitors");
   const [pwOpen, setPwOpen] = useState(false);
+  const [master, setMaster] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -37,6 +39,7 @@ export default function AdminApp() {
       if (!data.user) return setState("login");
       setEmail(data.user.email);
       const { data: ok } = await sb.rpc("is_admin");
+      if (ok) { const { data: m } = await sb.rpc("is_master"); setMaster(!!m); }
       setState(ok ? "ready" : "denied");
     })();
   }, [sb]);
@@ -59,13 +62,13 @@ export default function AdminApp() {
     <main className="admin">
       <div className="admin-head">
         <h1>관리자</h1>
-        <span className="muted">{email}</span>
-        <button className="adm-btn" onClick={() => setPwOpen(!pwOpen)}>비밀번호 정하기</button>
+        <span className="muted">{email.replace(/@admin\.bnitopaz\.invalid$/, "")}{master && " · 마스터"}</span>
+        <button className="adm-btn" onClick={() => setPwOpen(!pwOpen)}>내 비밀번호 바꾸기</button>
         <button className="adm-btn" onClick={logout}>로그아웃</button>
       </div>
       {pwOpen && <PasswordBox onClose={() => setPwOpen(false)} />}
       <nav className="admin-tabs">
-        {TABS.map(([k, label]) => (
+        {[...TABS, ...(master ? [["accounts", "관리자 계정"]] : [])].map(([k, label]) => (
           <button key={k} aria-pressed={tab === k} onClick={() => setTab(k)}>{label}</button>
         ))}
       </nav>
@@ -74,6 +77,7 @@ export default function AdminApp() {
       {tab === "leadership" && <LeadershipTab />}
       {tab === "wanted" && <WantedTab />}
       {tab === "help" && <HelpTab />}
+      {tab === "accounts" && master && <AccountsTab me={email} />}
       {tab === "invite" && <InviteTab />}
       {tab === "about" && <AboutTab />}
       {tab === "chapter" && <ChapterTab />}
@@ -97,35 +101,35 @@ function LoginBox() {
   async function login(e) {
     e.preventDefault();
     setBusy(true); setErr(""); setMsg("");
-    const { error } = await sb.auth.signInWithPassword({ email: email.trim(), password: pw });
+    const { error } = await sb.auth.signInWithPassword({ email: loginEmail(email), password: pw });
     setBusy(false);
-    if (error) return setErr("아이디(메일) 또는 비밀번호가 맞지 않습니다. 비밀번호를 아직 안 정하셨다면 아래 '메일로 로그인 링크 받기'를 눌러 주세요.");
+    if (error) return setErr("아이디 또는 비밀번호가 맞지 않습니다. 비밀번호를 모르면 마스터 관리자에게 새로 정해 달라고 부탁하세요.");
     location.reload();
   }
 
   async function sendLink() {
-    if (!email.trim()) return setErr("위 칸에 관리자 메일을 먼저 넣어 주세요.");
+    if (!email.includes("@")) return setErr("메일 로그인 링크는 메일 주소로 등록된 관리자만 받을 수 있어요. 위 칸에 관리자 메일을 넣어 주세요.");
     setErr(""); setMsg("보내는 중…");
     const { error } = await sb.auth.signInWithOtp({
       email: email.trim(),
       options: { emailRedirectTo: `${location.origin}/admin/callback`, shouldCreateUser: false },
     });
-    setMsg(error ? `보내지 못했습니다: ${error.message}` : "메일을 보냈습니다. 메일함에서 '로그인' 링크를 눌러 주세요. 들어간 뒤 오른쪽 위 '비밀번호 정하기'에서 비밀번호를 만들면 다음부터는 바로 로그인됩니다.");
+    setMsg(error ? `보내지 못했습니다: ${error.message}` : "메일을 보냈습니다. 메일함에서 '로그인' 링크를 눌러 주세요. 들어간 뒤 오른쪽 위 '내 비밀번호 바꾸기'에서 비밀번호를 만들면 다음부터는 바로 로그인됩니다.");
   }
 
   return (
     <main className="admin admin-narrow">
       <h1>관리자 로그인</h1>
-      <p className="muted">관리자로 등록된 메일과 비밀번호를 넣어 주세요.</p>
+      <p className="muted">마스터 관리자에게 받은 아이디와 비밀번호를 넣어 주세요.</p>
       {failed && <p className="adm-err">로그인 링크가 만료되었거나 이미 사용되었습니다. 다시 받아 주세요.</p>}
       <form onSubmit={login} className="adm-form">
-        <label>아이디 (관리자 메일)<input type="email" required autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} /></label>
+        <label>아이디 (또는 관리자 메일)<input type="text" required autoComplete="username" autoCapitalize="none" value={email} onChange={(e) => setEmail(e.target.value)} /></label>
         <label>비밀번호<input type="password" required autoComplete="current-password" value={pw} onChange={(e) => setPw(e.target.value)} /></label>
         <button className="btn btn-main" type="submit" disabled={busy}>{busy ? "확인 중…" : "로그인"}</button>
       </form>
       {err && <p className="adm-err">{err}</p>}
       <div className="adm-alt">
-        <span className="muted">비밀번호를 아직 안 정했거나 잊으셨나요?</span>
+        <span className="muted">메일로 등록된 관리자라면</span>
         <button type="button" className="adm-btn" onClick={sendLink}>메일로 로그인 링크 받기</button>
       </div>
       {msg && <p className="adm-msg">{msg}</p>}
@@ -150,7 +154,7 @@ function PasswordBox({ onClose }) {
   }
   return (
     <form className="adm-card adm-form adm-pw" onSubmit={save}>
-      <b>비밀번호 정하기</b>
+      <b>내 비밀번호 바꾸기</b>
       <label>새 비밀번호 (8자 이상)<input type="password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} /></label>
       <label>한 번 더<input type="password" autoComplete="new-password" value={pw2} onChange={(e) => setPw2(e.target.value)} /></label>
       <div className="adm-save">

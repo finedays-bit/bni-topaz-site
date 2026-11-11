@@ -59,8 +59,6 @@ img { max-width: 100%; display: block; }
 .nav-insta { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: var(--accent-deep); border: 1px solid var(--line); background: #fff; }
 .nav-insta:hover { color: var(--accent); }
 .nav-connect { background: var(--red); }
-.nav-admin { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--accent-deep); font-size: 13px; font-weight: 500; white-space: nowrap; }
-.nav-admin:hover { border-color: var(--accent); }
 
 .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
 section.wrap { padding-top: 32px; padding-bottom: 80px; }
@@ -361,7 +359,6 @@ a.edu-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(23, 
   .nav-links { order: 3; width: 100%; margin: 0; gap: 0; justify-content: space-between; overflow-x: auto; font-size: min(13.5px, 3.55vw); letter-spacing: -0.03em; white-space: nowrap; scrollbar-width: none; }
   .nav-links a + a { margin-left: min(8px, 1.6vw); }
   .nav-cta, .nav-connect { padding: 6px 9px; font-size: 12px; }
-  .nav-admin { padding: 5px 8px; font-size: 12px; }
   .rpi, .steps, .duo { grid-template-columns: 1fr; }
   .edu-grid { grid-template-columns: 1fr; }
 }
@@ -599,3 +596,15 @@ a.edu-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(23, 
 .adm-sched-row.is-mini { border-color: var(--gold-light); }
 .adm-kinds { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
 .admin-head .adm-btn + .adm-btn { margin-left: 0; }
+
+/* 관리자 입구 — 맨 아래 오른쪽, 흐리게 */
+.footer { position: relative; }
+.footer-admin { position: absolute; right: max(14px, env(safe-area-inset-right, 0px)); bottom: calc(10px + env(safe-area-inset-bottom, 0px)); font-size: 11px; color: currentColor; opacity: 0.28; text-decoration: none; }
+.footer-admin:hover, .footer-admin:focus-visible { opacity: 0.8; }
+/* 관리자 계정 탭 */
+.adm-acc-form { display: grid; gap: 8px; max-width: 460px; }
+.adm-acc-list { display: grid; gap: 8px; margin-top: 14px; }
+.adm-acc { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 14px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
+.adm-acc small { display: block; font-size: 12px; color: var(--ink-soft); }
+.adm-acc-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.adm-acc-actions input { font: inherit; font-size: 13px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 8px; width: 130px; }
