@@ -8,11 +8,13 @@ import MigrateTab from "./MigrateTab";
 import VisitorsTab from "./VisitorsTab";
 import WantedTab from "./WantedTab";
 import HelpTab from "./HelpTab";
+import ActivityTab from "./ActivityTab";
 import AccountsTab, { loginEmail } from "./AccountsTab";
 import { canUse } from "@/lib/adminPerms";
 
 const TABS = [
   ["visitors", "참관 신청"],
+  ["activity", "활동 게시판"],
   ["members", "멤버·명함"],
   ["leadership", "리더십팀"],
   ["wanted", "찾는 분야"],
@@ -85,6 +87,7 @@ export default function AdminApp() {
       </nav>
       {tab === "visitors" && canUse(access, "visitors") && <VisitorsTab />}
       {tab === "members" && canUse(access, "members") && <MembersTab />}
+      {tab === "activity" && canUse(access, "activity") && <ActivityTab />}
       {tab === "leadership" && canUse(access, "leadership") && <LeadershipTab />}
       {tab === "wanted" && canUse(access, "wanted") && <WantedTab />}
       {tab === "help" && canUse(access, "help") && <HelpTab />}

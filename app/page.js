@@ -3,6 +3,8 @@ import { getMembers, getSettings } from "@/lib/store";
 import WantedFields from "./WantedFields";
 import InviteCard, { VenueText, inviteWhen } from "./invite/InviteCard";
 import ShareButtons from "./invite/ShareButtons";
+import { getPosts } from "@/lib/posts";
+import PostCard from "./activity/PostCard";
 
 export const revalidate = 60;
 
@@ -22,7 +24,7 @@ const flow = [
 ];
 
 export default async function Home() {
-  const [{ chapter, wanted, invite }, members] = await Promise.all([getSettings(), getMembers()]);
+  const [{ chapter, wanted, invite }, members, posts] = await Promise.all([getSettings(), getMembers(), getPosts(3)]);
   return (
     <main>
       <section className="hero">
@@ -79,7 +81,17 @@ export default async function Home() {
                 <span>활동 멤버</span>
               </div>
             )}
-          </div>        </div>
+          </div>
+          {posts.length > 0 && (
+            <div className="home-activity">
+              <div className="home-activity-head">
+                <div><p className="eyebrow">Activity</p><h2>토파즈 최근 활동</h2></div>
+                <Link href="/activity" className="btn btn-line">활동 소식 전체 보기 →</Link>
+              </div>
+              <div className="post-grid">{posts.map((p) => <PostCard key={p.id} post={p} />)}</div>
+            </div>
+          )}
+        </div>
       </section>
 
       <section className="band">
