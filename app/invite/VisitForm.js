@@ -4,7 +4,8 @@ import { useState } from "react";
 import InviterField from "./InviterField";
 
 // 참관 신청서 — 제출하면 운영진(비지터 호스트 리더·의장단)에게 메일이 가고 관리자 화면에 저장된다
-export default function VisitForm({ members, dates }) {
+// locked: 멤버가 만든 초대장으로 들어온 경우 — 날짜는 초대장 날짜로 고정, 초대한 멤버도 미리 채움
+export default function VisitForm({ members, dates, locked = false, inviter = "" }) {
   const [state, setState] = useState({ status: "idle", msg: "" }); // idle | sending | done | error
 
   async function submit(e) {
@@ -49,13 +50,30 @@ export default function VisitForm({ members, dates }) {
       <label>휴대폰 번호 *<input name="phone" type="tel" inputMode="tel" required placeholder="010-0000-0000" maxLength={20} autoComplete="tel" /></label>
       <label>회사명 *<input name="company" required maxLength={80} autoComplete="organization" /></label>
       <label>사업 분야 *<input name="field" required maxLength={80} placeholder="예: 세무 기장, 인테리어" /></label>
-      <label>
-        참관 예정일 *
-        <select name="visitDate" required defaultValue={dates[0]?.value}>
-          {dates.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
-        </select>
-      </label>
-      <InviterField members={members} />
+      {locked ? (
+        <div className="locked-field">
+          <span>참관 예정일</span>
+          <b>{dates[0]?.label}</b>
+          <small>초대장에 적힌 날짜로 신청됩니다.</small>
+          <input type="hidden" name="visitDate" value={dates[0]?.value} />
+        </div>
+      ) : (
+        <label>
+          참관 예정일 *
+          <select name="visitDate" required defaultValue={dates[0]?.value}>
+            {dates.map((d) => <option key={d.value} value={d.value}>{d.label}</option>)}
+          </select>
+        </label>
+      )}
+      {inviter ? (
+        <div className="locked-field">
+          <span>초대한 멤버</span>
+          <b>{inviter}</b>
+          <input type="hidden" name="inviter" value={inviter} />
+        </div>
+      ) : (
+        <InviterField members={members} />
+      )}
       {/* 사람에게는 안 보이는 칸: 자동 등록 프로그램 막기 */}
       <input name="website" tabIndex={-1} autoComplete="off" className="hp" aria-hidden="true" />
       <label className="agree">

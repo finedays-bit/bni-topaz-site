@@ -120,3 +120,5 @@ drop policy if exists "관리자만 신청 고치기" on public.visitors;
 create policy "관리자만 신청 고치기" on public.visitors for update using (public.is_admin()) with check (public.is_admin());
 drop policy if exists "관리자만 신청 지우기" on public.visitors;
 create policy "관리자만 신청 지우기" on public.visitors for delete using (public.is_admin());
+
+-- 7. 멤버가 만든 초대장 → supabase/invitations.sql 참고 (같은 내용)

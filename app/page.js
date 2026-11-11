@@ -52,6 +52,7 @@ export default async function Home() {
           <Link href="/invite#apply" className="btn invite-cta">참관 신청하기 →</Link>
         </div>
         <ShareButtons text={`${inviteWhen(invite)} BNI 토파즈 챕터 비즈니스 조찬모임에 초대합니다.`} />
+        <div className="share"><Link href="/invite/make" className="btn btn-line invite-make">✎ 내 초대장 만들기 (날짜·문구 고르기)</Link></div>
       </section>
 
       <section className="band">

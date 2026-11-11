@@ -42,6 +42,7 @@ export default async function RootLayout({ children }) {
             )}
             <Link href="/invite" className="nav-cta">참관 신청</Link>
             <a href={links.bniConnect} className="nav-connect" target="_blank" rel="noopener noreferrer">BNI Connect</a>
+            <Link href="/admin" className="nav-admin" aria-label="관리자 로그인">관리자</Link>
           </div>
         </header>
         {children}

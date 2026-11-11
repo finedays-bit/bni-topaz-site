@@ -1,5 +1,5 @@
 import { formatKoreanDate } from "@/lib/data";
-import { meetingDate } from "@/lib/invite";
+import { meetingDate, kindOf, textsFor } from "@/lib/invite";
 import CopyAccount from "./CopyAccount";
 
 // 초대장 카드 — 초대장 페이지와 첫 페이지가 같이 쓴다
@@ -22,33 +22,58 @@ export function VenueText({ venue, map = false }) {
 export const naverMap = (venue) =>
   `https://map.naver.com/p/search/${encodeURIComponent(venue.match(/^.*?\d+(?:-\d+)?(?=\s|\(|$)/)?.[0] ?? venue)}`;
 
-export const inviteWhen = (invite) => `${formatKoreanDate(meetingDate(invite))} ${invite.time}`;
+export const inviteWhen = (invite, date = meetingDate(invite)) => `${formatKoreanDate(date)} ${invite.time}`;
 
-export default function InviteCard({ invite, withAccount = true }) {
+// 글자 길이로 크기 정하기 — 멤버가 글자를 바꿔도 틀 안에 자연스럽게 들어가도록
+// 한글은 영문 대문자보다 넓어서 1.4칸으로 센다
+const width = (s = "") => [...s].reduce((n, c) => n + (/[\u3131-\uD7A3]/.test(c) ? 1.4 : c === " " ? 0.5 : 1), 0);
+function titleSize(title) {
+  const f = Math.min(1, 10 / Math.max(width(title), 1));       // 'INVITATION'(10칸) 기준
+  return { fontSize: `clamp(${Math.max(22, 40 * f)}px, ${11 * f}vw, ${64 * f}px)` };
+}
+function subSize(sub) {
+  const f = Math.min(1, 15 / Math.max(width(sub), 1));         // '귀하를 정중히 초대합니다' 기준
+  return f < 1 ? { fontSize: `clamp(${Math.max(16, 20 * f)}px, ${5 * f}vw, ${26 * f}px)` } : undefined;
+}
+function bodySize(body) {
+  const n = [...(body ?? "")].length;
+  return n > 320 ? { fontSize: 13 } : n > 220 ? { fontSize: 14 } : undefined;
+}
+
+// 본문: 빈 줄 = 문단, 줄바꿈 = 줄바꿈
+function Body({ text }) {
+  const style = bodySize(text);
+  return (text ?? "").split(/\n\s*\n/).map((para, i) => (
+    <p className="inv-body" style={style} key={i}>
+      {para.split("\n").map((line, j) => <span key={j}>{j > 0 && <br />}{line}</span>)}
+    </p>
+  ));
+}
+
+// date·kind·text·to·from 을 주면 멤버가 만든 초대장, 안 주면 이번 주 기본 초대장
+export default function InviteCard({ invite, withAccount = true, date, kind, text, to, from }) {
+  const when = date ?? meetingDate(invite);
+  const k = kind ?? kindOf(invite, when);
+  const t = { ...textsFor(invite, k), ...text };
   const rows = [
-    ["일 시", <span className="inv-when">{inviteWhen(invite)}</span>],
+    ["일 시", <span className="inv-when">{inviteWhen(invite, when)}</span>],
     ["장 소", <VenueText venue={invite.venue} map />],
     ["드레스코드", invite.dressCode],
     ["준 비 물", invite.bring],
     ["참 가 비", withAccount ? <>{invite.fee}<br /><CopyAccount account={invite.account} /></> : invite.fee],
   ];
   return (
-    <article className="invitation">
+    <article className={`invitation inv-${k}`}>
       <div className="inv-logo">
         <img className="inv-logo-bni" src="/brand/bni-logo.png" alt="BNI" width="200" height="77" />
         <img className="inv-logo-topaz" src="/brand/topaz-main.png" alt="TOPAZ CHAPTER — DONGTAN · HWASEONG · GLOBAL" width="1200" height="424" />
       </div>
+      {to && <p className="inv-to">{to}께</p>}
       <p className="inv-tag">A Brighter Tomorrow Together</p>
-      <h1 className="inv-title">INVITATION</h1>
-      <p className="inv-sub">귀하를 정중히 초대합니다</p>
-      <p className="inv-body">
-        BNI는 기업 경영자와 전문가들이<br />비즈니스 소개를 주고받으며<br />
-        상호 간의 사업 성장을 지원하는<br />세계 최대의 비즈니스 네트워크입니다.
-      </p>
-      <p className="inv-body">
-        대표님의 업종에 정기적으로 고객을 소개해 드릴 수 있는{" "}
-        제가 신뢰하는 사업가들의 협업 모임에 초대합니다.
-      </p>
+      <h1 className="inv-title" style={titleSize(t.title)}>{t.title}</h1>
+      <p className="inv-sub" style={subSize(t.sub)}>{t.sub}</p>
+      <Body text={t.body} />
+      {from && <div className="inv-from"><small>초대하는 사람</small>{from}</div>}
       <div className="inv-divider" aria-hidden="true"><span /></div>
       <table className="inv-table">
         <tbody>

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { Field, SaveBar, useSetting } from "./shared";
 import { about as aboutDefaults, formatKoreanDate } from "@/lib/data";
-import { meetingDate } from "@/lib/invite";
+import { meetingDate, scheduleDates, weeksLabel, KINDS, DEFAULT_TEXTS, textsFor } from "@/lib/invite";
 
 const Loading = ({ status }) => <section className="adm-panel"><p className="muted">{status || "불러오는 중…"}</p></section>;
 
@@ -37,16 +37,6 @@ export function AboutTab() {
   );
 }
 
-// 휴회일 입력: 쓰는 동안은 글자 그대로, 칸을 벗어나면 날짜만 골라 담는다
-function SkipDates({ value, onChange }) {
-  const [text, setText] = useState(value.join("\n"));
-  const commit = () => onChange(text.split("\n").map((t) => t.trim()).filter((t) => /^\d{4}-\d{2}-\d{2}$/.test(t)));
-  return (
-    <Field label="휴회일 (이 날은 건너뛰고 다음 주로)" rows={3} value={text} onChange={setText}
-      placeholder="2026-12-29" hint="한 줄에 하나, 2026-12-29 처럼. 칸 밖을 누르면 반영됩니다" onBlur={commit} />
-  );
-}
-
 // 점수표 입력: 쓰는 동안은 글자 그대로, 칸을 벗어나면 '|' 가 있는 줄만 표로 담는다
 function ScoreTable({ initial, onChange }) {
   const [text, setText] = useState(initial);
@@ -54,31 +44,104 @@ function ScoreTable({ initial, onChange }) {
   return <Field label="기본 표 (한 줄에 '교육점수 | 트래픽 점수')" rows={4} value={text} onChange={setText} onBlur={commit} />;
 }
 
-// ── 이번 주 초대장 ──────────────────────────────────────────────
+// ── 초대장·정모 일정 ──────────────────────────────────────────────
+const SCHED_KINDS = { ...KINDS, off: "휴회" };
+
+// 정모 일정표: 앞으로 8주의 화요일마다 종류(일반·MEGA BCD·MINI BCD·휴회)를 정한다
+// 휴회는 skipDates 에, BCD 는 kinds 에 저장 (멤버 '내 초대장 만들기'와 기본 초대장이 이걸 보고 자동으로 바뀐다)
+function Schedule({ v, setValue }) {
+  const dates = scheduleDates(v, 8);
+  const skip = new Set(v.skipDates ?? []);
+  const kindAt = (d) => (skip.has(d) ? "off" : v.kinds?.[d] ?? "normal");
+  const setKind = (d, k) => {
+    const skipDates = (v.skipDates ?? []).filter((x) => x !== d);
+    const kinds = { ...v.kinds };
+    delete kinds[d];
+    if (k === "off") skipDates.push(d);
+    else if (k !== "normal") kinds[d] = k;
+    setValue({ ...v, skipDates: skipDates.sort(), kinds });
+  };
+  return (
+    <div className="adm-sched">
+      {dates.map((d) => {
+        const k = kindAt(d);
+        return (
+          <div className={`adm-sched-row is-${k}`} key={d}>
+            <small>{weeksLabel(d)}</small>
+            <b>{formatKoreanDate(d)}</b>
+            <select value={k} onChange={(e) => setKind(d, e.target.value)} aria-label={`${d} 모임 종류`}>
+              {Object.entries(SCHED_KINDS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+            </select>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// 종류별 기본 글자 (멤버가 종류를 고르면 처음에 채워지는 글자)
+function KindTexts({ v, setValue }) {
+  const setText = (k, field, x) => setValue({ ...v, texts: { ...v.texts, [k]: { ...textsFor(v, k), [field]: x } } });
+  const reset = (k) => { const texts = { ...v.texts }; delete texts[k]; setValue({ ...v, texts }); };
+  return (
+    <div className="adm-kinds">
+      {Object.entries(KINDS).map(([k, label]) => {
+        const t = textsFor(v, k);
+        return (
+          <div className="adm-card" key={k}>
+            <b>{label}</b>
+            <Field label="큰 제목" value={t.title} onChange={(x) => setText(k, "title", x)} />
+            <Field label="인사 문구" value={t.sub} onChange={(x) => setText(k, "sub", x)} />
+            <Field label="본문 (빈 줄 = 문단 나누기)" rows={7} value={t.body} onChange={(x) => setText(k, "body", x)} />
+            <button className="adm-btn" type="button" onClick={() => reset(k)}
+              disabled={JSON.stringify(t) === JSON.stringify(DEFAULT_TEXTS[k])}>처음 글자로</button>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export function InviteTab() {
   const { value: v, setValue, save, status } = useSetting("invite");
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState("");
   if (!v) return <Loading status={status} />;
   const set = (k) => (x) => setValue({ ...v, [k]: x });
   const auto = v.auto !== false;
   const next = meetingDate(v);
-  const link = typeof window !== "undefined" ? `${location.origin}/invite` : "/invite";
-  const copy = async () => { try { await navigator.clipboard.writeText(link); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch {} };
+  const origin = typeof window !== "undefined" ? location.origin : "";
+  const copy = async (link) => { try { await navigator.clipboard.writeText(link); setCopied(link); setTimeout(() => setCopied(""), 2000); } catch {} };
   return (
     <section className="adm-panel">
-      <h2>이번 주 초대장</h2>
+      <h2>초대장·정모 일정</h2>
       <div className="adm-card">
         <b>초대장 공유 링크 (매주 같은 주소)</b>
-        <div className="adm-row"><code>{link}</code><button className="adm-btn" onClick={copy}>{copied ? "복사됨!" : "링크 복사"}</button></div>
+        <div className="adm-row"><code>{origin}/invite</code><button className="adm-btn" onClick={() => copy(`${origin}/invite`)}>{copied === `${origin}/invite` ? "복사됨!" : "링크 복사"}</button></div>
         <p className="muted">지금 이 링크를 열면 <b>{formatKoreanDate(next)} {v.time}</b> 초대장이 보입니다.</p>
+        <b>멤버용 '내 초대장 만들기' 주소</b>
+        <div className="adm-row"><code>{origin}/invite/make</code><button className="adm-btn" onClick={() => copy(`${origin}/invite/make`)}>{copied === `${origin}/invite/make` ? "복사됨!" : "링크 복사"}</button></div>
+        <p className="muted">멤버가 날짜(다음주·2주 후·3주 후…)와 종류를 고르고 글자를 고쳐 자기만의 초대장 링크를 만듭니다. 받은 분은 그 날짜로 참관 신청을 합니다.</p>
       </div>
+
       <div className="adm-checks">
         <label><input type="checkbox" checked={auto} onChange={(e) => set("auto")(e.target.checked)} /> 매주 화요일로 날짜 자동 갱신 (화요일 오전 9시가 지나면 다음 주로)</label>
       </div>
+      {auto ? (
+        <>
+          <h3 className="adm-sub">정모 일정표</h3>
+          <p className="muted">주마다 종류를 정해 주세요. <b>휴회</b>는 초대장과 신청서에서 빠지고, <b>MEGA·MINI BCD</b>로 정한 주는 초대장이 그 종류 글자로 자동으로 바뀝니다.</p>
+          <Schedule v={v} setValue={setValue} />
+        </>
+      ) : (
+        <div className="adm-grid"><Field label="모임 날짜 (자동을 끈 경우)" type="date" value={v.date} onChange={set("date")} /></div>
+      )}
+
+      <h3 className="adm-sub">초대장 종류별 기본 글자</h3>
+      <p className="muted">멤버가 종류를 고르면 처음에 채워지는 글자입니다. 멤버는 여기서 시작해 자기 글로 고칠 수 있어요. 디자인(틀)은 세 종류 모두 같습니다.</p>
+      <KindTexts v={v} setValue={setValue} />
+
+      <h3 className="adm-sub">모임 정보 (모든 초대장 공통)</h3>
       <div className="adm-grid">
-        {auto
-          ? <SkipDates value={v.skipDates ?? []} onChange={set("skipDates")} />
-          : <Field label="모임 날짜 (자동을 끈 경우)" type="date" value={v.date} onChange={set("date")} />}
         <Field label="시간" value={v.time} onChange={set("time")} />
         <Field label="장소" value={v.venue} onChange={set("venue")} />
         <Field label="드레스코드" value={v.dressCode} onChange={set("dressCode")} />
