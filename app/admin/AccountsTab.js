@@ -13,7 +13,7 @@ export default function AccountsTab({ me }) {
   const sb = supabaseBrowser();
   const [rows, setRows] = useState(null);
   const [msg, setMsg] = useState("");
-  const [form, setForm] = useState({ id: "", pw: "", master: false });
+  const [form, setForm] = useState({ id: "", pw: "" });
   const [reset, setReset] = useState({}); // 이메일별 새 비밀번호 입력칸
 
   const load = async () => {
@@ -34,7 +34,7 @@ export default function AccountsTab({ me }) {
   async function add(e) {
     e.preventDefault();
     if (!form.id.trim() || form.pw.length < 8) return setMsg("아이디와 8자 이상 비밀번호를 넣어 주세요.");
-    if (await save(form.id, form.pw, form.master)) setForm({ id: "", pw: "", master: false });
+    if (await save(form.id, form.pw, false)) setForm({ id: "", pw: "" });
   }
   async function remove(email) {
     if (!confirm(`${showId(email)} 관리자를 뺄까요? 더는 로그인할 수 없게 됩니다.`)) return;
@@ -46,14 +46,16 @@ export default function AccountsTab({ me }) {
   return (
     <section className="adm-panel">
       <h2>관리자 계정</h2>
-      <p className="muted">마스터 관리자만 보이는 탭입니다. 관리자 아이디를 만들고 비밀번호를 정해 주세요. 아이디 대신 메일 주소를 넣어도 됩니다.</p>
+      <p className="muted">마스터 관리자만 보이는 탭입니다. 아이디와 비밀번호만 정하면 관리자가 추가됩니다.</p>
 
-      <form className="adm-card adm-acc-form" onSubmit={add}>
-        <b>새 관리자 추가</b>
-        <label className="adm-field"><span>아이디 (영문·숫자, 또는 메일)</span><input value={form.id} autoCapitalize="none" onChange={(e) => setForm({ ...form, id: e.target.value })} placeholder="예: visitor2026" /></label>
-        <label className="adm-field"><span>비밀번호 (8자 이상)</span><input value={form.pw} onChange={(e) => setForm({ ...form, pw: e.target.value })} autoComplete="new-password" /></label>
-        <label className="adm-check"><input type="checkbox" checked={form.master} onChange={(e) => setForm({ ...form, master: e.target.checked })} /> 마스터 관리자 (다른 관리자 계정까지 관리)</label>
-        <button className="btn btn-main" type="submit">추가</button>
+      <form className="adm-card adm-acc-add" onSubmit={add}>
+        <b>관리자 추가</b>
+        <div className="adm-acc-row">
+          <label className="adm-field"><span>아이디</span><input value={form.id} autoCapitalize="none" autoComplete="off" onChange={(e) => setForm({ ...form, id: e.target.value })} placeholder="예: visitor" /></label>
+          <label className="adm-field"><span>비밀번호 (8자 이상)</span><input value={form.pw} autoComplete="new-password" onChange={(e) => setForm({ ...form, pw: e.target.value })} /></label>
+          <button className="btn btn-main" type="submit">추가</button>
+        </div>
+        <small className="muted">만든 아이디와 비밀번호를 그분께 직접 알려 주세요.</small>
       </form>
       {msg && <p className="adm-msg">{msg}</p>}
 

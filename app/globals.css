@@ -602,7 +602,10 @@ a.edu-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(23, 
 .footer-admin { position: absolute; right: max(14px, env(safe-area-inset-right, 0px)); bottom: calc(10px + env(safe-area-inset-bottom, 0px)); font-size: 11px; color: currentColor; opacity: 0.28; text-decoration: none; }
 .footer-admin:hover, .footer-admin:focus-visible { opacity: 0.8; }
 /* 관리자 계정 탭 */
-.adm-acc-form { display: grid; gap: 8px; max-width: 460px; }
+.adm-acc-add { display: grid; gap: 8px; max-width: 640px; }
+.adm-acc-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: end; }
+.adm-acc-row .adm-field { margin-bottom: 0; }
+@media (max-width: 560px) { .adm-acc-row { grid-template-columns: 1fr; } }
 .adm-acc-list { display: grid; gap: 8px; margin-top: 14px; }
 .adm-acc { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 14px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
 .adm-acc small { display: block; font-size: 12px; color: var(--ink-soft); }
